@@ -1,6 +1,31 @@
 # Password Strength Calculator
 
-[TODO. There will be project description]
+When launching the script asks a password, then examines its strength by following points:
+1. length of the password
+1. does password have a digit symbol
+1. does password consist of a lowercase character
+1. does password consist of a uppercase character
+1. whether password has a sequence of digits in date format xx-xx-xxxx
+1. whether password has words form a password black list like 'password', '12345' and so on.
+
+Based on these points the script calculates the strength of the password by 10-points scale and outputs 
+result to console.
+
+# Quickstart
+
+Example of script launch on Linux, Python 3.5:
+
+```bash
+
+$ python3 password_strength.py
+```
+
+Output example as following:
+
+```
+Your password: Password1
+The strength of your password by 10-points scale (1 - weak password, 10 - good password) is :  2
+```
 
 # Project Goals
 
