@@ -20,6 +20,7 @@ Example of script launch on Linux, Python 3.5:
 $ python3 password_strength.py <path to file>
 ```
 Where parameter `<path to file>` specifyes a file containing a list of the words not recommended for the  password.
+If launching the script without parameters then blacklist includes the Username only.
 
 Output example as following:
 
