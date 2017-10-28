@@ -5,8 +5,8 @@ When launching the script asks a password, then examines its strength by followi
 1. does password have a digit symbol
 1. does password consist of a lowercase character
 1. does password consist of a uppercase character
-1. whether password has a sequence of digits in date format xx-xx-xxxx
-1. whether password has words form a password black list like 'password', '12345' and so on.
+1. whether password has a sequence of digits in date format dd[-./]mm[-./]yyyy, dd[-./]mm[-./]yy
+1. whether password has words form a password black list like 'password', '12345', username and so on.
 
 Based on these points the script calculates the strength of the password by 10-points scale and outputs 
 result to console.
@@ -17,8 +17,9 @@ Example of script launch on Linux, Python 3.5:
 
 ```bash
 
-$ python3 password_strength.py
+$ python3 password_strength.py <path to file>
 ```
+Where parameter <path to file> specifyes a file containing a list of the words not recommended for the  password.
 
 Output example as following:
 
