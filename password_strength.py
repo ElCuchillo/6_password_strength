@@ -1,10 +1,25 @@
+import sys
+import getpass
 import re
+import string
 
 
-def get_password_strength(password):
+def load_blacklist(blacklist_file=''):
 
-    password_blacklist = ['password', 'qwerty', '12345', '111', '555', '777',
-                           'test', 'admin', 'god']
+    try:
+        with open(blacklist_file, 'r') as loaded_list:
+            password_blacklist = (list(filter(None,[line.rstrip('\n') for line in loaded_list.readlines()])))
+
+    except FileNotFoundError:
+        password_blacklist =[]
+
+    password_blacklist.append(getpass.getuser())
+
+    return password_blacklist
+
+
+def get_password_strength(password, password_blacklist):
+
     medium_length = 6
     good_length = 10
 
@@ -17,14 +32,16 @@ def get_password_strength(password):
 
     password_has_lower = bool(re.search('[a-zа-я]', password))
 
-    password_has_special = bool(re.search('[~!@#$%^&*()_]', password))
+    password_has_special = bool([char for char in set(string.punctuation)
+                                 if char in password])
 
     password_has_date = bool(re.search(r'''(0[1-9]|[12][0-9]|3[01])[- /.]
                                        (0[1-9]|1[012])[- /.]\d{2,4}''',
                                        password))
 
-    password_has_bad_word = bool(sum(1 for word in password_blacklist
-                                 if re.search(word, password.lower())))
+    password_has_bad_word = \
+        bool(list(filter(lambda x: x in password.lower(),
+                         password_blacklist)))
 
     password_strength = (password_length + password_has_digit * 1 +
                          password_has_upper * 1 +
@@ -39,7 +56,13 @@ def get_password_strength(password):
 
 
 if __name__ == '__main__':
-    checked_password = input('Your password: ')
+
+    checked_password = getpass.getpass()
+    try:
+        blacklist = load_blacklist(sys.argv[1])
+    except IndexError:
+        blacklist = load_blacklist()
+
     print('''The strength of your password by 10-points scale 
           (1 - weak password, 10 - good password) is : ''',
-          get_password_strength(checked_password))
+          get_password_strength(checked_password, blacklist))
