@@ -1,0 +1,14 @@
+password
+qwerty
+12345
+111
+555
+777
+
+admin
+test
+god
+
+
+
+
