@@ -4,18 +4,23 @@ import re
 import string
 
 
-def load_blacklist(blacklist_file=''):
+def load_blacklist_file(blacklist_file=''):
 
     try:
-        with open(blacklist_file, 'r') as loaded_list:
-            password_blacklist = (list(filter(None,[line.rstrip('\n') for line in loaded_list.readlines()])))
+        with open(blacklist_file, 'r') as loaded_data:
+            return loaded_data.readlines()
 
     except FileNotFoundError:
-        password_blacklist =[]
+        return []
 
-    password_blacklist.append(getpass.getuser())
+    
+def complete_blacklist(loaded_data):
 
-    return password_blacklist
+    blacklist = (list(filter(None,[line.rstrip('\n')
+                                  for line in loaded_data])))
+    blacklist.append(getpass.getuser())
+
+    return blacklist
 
 
 def get_password_strength(password, password_blacklist):
@@ -47,8 +52,8 @@ def get_password_strength(password, password_blacklist):
                          password_has_upper * 1 +
                          password_has_lower * 1 +
                          password_has_special * 1 -
-                         password_has_date * 2 -
-                         password_has_bad_word * 3)
+                         password_has_date * 1 -
+                         password_has_bad_word * 2)
     if password_strength < 0:
         password_strength = 1
 
@@ -59,10 +64,11 @@ if __name__ == '__main__':
 
     checked_password = getpass.getpass()
     try:
-        blacklist = load_blacklist(sys.argv[1])
+        loaded_data = load_blacklist_file(sys.argv[1])
     except IndexError:
-        blacklist = load_blacklist()
+        loaded_data = load_blacklist_file()
 
+    blacklist = complete_blacklist(loaded_data)
     print('''The strength of your password by 10-points scale 
           (1 - weak password, 10 - good password) is : ''',
           get_password_strength(checked_password, blacklist))
