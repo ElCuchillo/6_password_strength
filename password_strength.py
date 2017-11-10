@@ -4,8 +4,7 @@ import re
 import string
 
 
-def load_blacklist_file(blacklist_file=''):
-
+def load_blacklist_file(blacklist_file):
     try:
         with open(blacklist_file, 'r') as loaded_data:
             return loaded_data.readlines()
@@ -13,18 +12,16 @@ def load_blacklist_file(blacklist_file=''):
     except FileNotFoundError:
         return []
 
-    
-def complete_blacklist(loaded_data):
 
-    blacklist = (list(filter(None,[line.rstrip('\n')
-                                  for line in loaded_data])))
+def complete_blacklist(loaded_data):
+    blacklist = (list(filter(None, [line.rstrip('\n')
+                                    for line in loaded_data])))
     blacklist.append(getpass.getuser())
 
     return blacklist
 
 
 def get_password_strength(password, password_blacklist):
-
     medium_length = 6
     good_length = 10
 
@@ -33,7 +30,7 @@ def get_password_strength(password, password_blacklist):
 
     password_has_digit = bool(re.search('[0-9]', password))
 
-    password_has_upper = bool (re.search('[A-ZА-Я]', password))
+    password_has_upper = bool(re.search('[A-ZА-Я]', password))
 
     password_has_lower = bool(re.search('[a-zа-я]', password))
 
@@ -66,7 +63,7 @@ if __name__ == '__main__':
     try:
         loaded_data = load_blacklist_file(sys.argv[1])
     except IndexError:
-        loaded_data = load_blacklist_file()
+        loaded_data = []
 
     blacklist = complete_blacklist(loaded_data)
     print('''The strength of your password by 10-points scale 
