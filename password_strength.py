@@ -6,16 +6,17 @@ import string
 
 def load_blacklist_file(blacklist_file):
     try:
-        with open(blacklist_file, 'r') as loaded_data:
-            return loaded_data.readlines()
+        with open(blacklist_file, 'r') as file:
+            return file.readlines()
 
     except FileNotFoundError:
         return []
 
 
-def complete_blacklist(loaded_data):
-    blacklist = (list(filter(None, [line.rstrip('\n')
-                                    for line in loaded_data])))
+def complete_blacklist(user_blacklist):
+    blacklist = [line.strip('\n') for line in user_blacklist
+                 if line.strip('\n')]
+
     blacklist.append(getpass.getuser())
 
     return blacklist
@@ -25,8 +26,14 @@ def get_password_strength(password, password_blacklist):
     medium_length = 6
     good_length = 10
 
-    password_length = (len(password) > medium_length) * 2 + \
-                      (len(password) > good_length) * 4
+    date_pattern = r'''(0[1-9] | [12][0-9] | 3[01])   #день 01-31
+                           [- /.]
+                           (0[1-9] | 1[012])          #месяц 01-12
+                           [- /.]
+                           \d{2,4}'''                 # год, 2/4 значный
+
+    password_is_long = (len(password) > medium_length) * 2 + \
+                       (len(password) > good_length) * 4
 
     password_has_digit = bool(re.search('[0-9]', password))
 
@@ -34,18 +41,16 @@ def get_password_strength(password, password_blacklist):
 
     password_has_lower = bool(re.search('[a-zа-я]', password))
 
-    password_has_special = bool([char for char in set(string.punctuation)
-                                 if char in password])
+    password_has_special = any(char in password for char
+                               in set(string.punctuation))
 
-    password_has_date = bool(re.search(r'''(0[1-9]|[12][0-9]|3[01])[- /.]
-                                       (0[1-9]|1[012])[- /.]\d{2,4}''',
-                                       password))
+    password_has_date = bool(re.search(date_pattern, password, re.VERBOSE))
 
-    password_has_bad_word = \
-        bool(list(filter(lambda x: x in password.lower(),
-                         password_blacklist)))
+    password_has_bad_word = any(bad_word in password.lower() for bad_word
+                                in password_blacklist)
 
-    password_strength = (password_length + password_has_digit * 1 +
+    password_strength = (password_is_long +
+                         password_has_digit * 1 +
                          password_has_upper * 1 +
                          password_has_lower * 1 +
                          password_has_special * 1 -
@@ -59,13 +64,14 @@ def get_password_strength(password, password_blacklist):
 
 if __name__ == '__main__':
 
-    checked_password = getpass.getpass()
+    user_password = getpass.getpass()
     try:
-        loaded_data = load_blacklist_file(sys.argv[1])
-    except IndexError:
-        loaded_data = []
+        user_blacklist = load_blacklist_file(sys.argv[1])
 
-    blacklist = complete_blacklist(loaded_data)
-    print('''The strength of your password by 10-points scale 
-          (1 - weak password, 10 - good password) is : ''',
-          get_password_strength(checked_password, blacklist))
+    except IndexError:
+        user_blacklist = []
+
+    blacklist = complete_blacklist(user_blacklist)
+    print('''The strength of your password by 10-points scale
+              (1 - weak password, 10 - good password) is :''',
+              get_password_strength(user_password, blacklist))
