@@ -31,16 +31,18 @@ def get_password_strength(password, password_blacklist):
                            [- /.]
                            \d{2,4}'''                 # год, 2/4 значный
 
-    password_strength = max(((len(password) > medium_length) * 2
-                        + (len(password) > good_length) * 4
-                        + bool(re.search('[0-9]', password))
-                        + bool(re.search('[A-ZА-Я]', password))
-                        + bool(re.search('[a-zа-я]', password))
-                        + any(char in password for char
-                              in string.punctuation)
-                        - bool(re.search(date_pattern, password, re.VERBOSE))
-                        - any(bad_word for bad_word in password_blacklist
-                              if bad_word in password.lower()) * 2), min_password_strength)
+     password_strength = max(((len(password) > medium_length) * 2
+                             + (len(password) > good_length) * 4
+                             + bool(re.search('[0-9]', password))
+                             + bool(re.search('[A-ZА-Я]', password))
+                             + bool(re.search('[a-zа-я]', password))
+                             + any(char in password for char
+                                   in string.punctuation)
+                             - bool(re.search(date_pattern, password,
+                                              re.VERBOSE))
+                             - any(bad_word for bad_word in password_blacklist
+                                   if bad_word in password.lower()) * 2),
+                             min_password_strength)
 
     return password_strength
 
