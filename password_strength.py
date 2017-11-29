@@ -23,6 +23,7 @@ def make_blacklist(user_blacklist):
 def get_password_strength(password, password_blacklist):
     medium_length = 6
     good_length = 10
+    min_password_strength = 1
 
     date_pattern = r'''(0[1-9] | [12][0-9] | 3[01])   #день 01-31
                            [- /.]
@@ -39,7 +40,7 @@ def get_password_strength(password, password_blacklist):
                               in string.punctuation)
                         - bool(re.search(date_pattern, password, re.VERBOSE))
                         - any(bad_word for bad_word in password_blacklist
-                              if bad_word in password.lower()) * 2), 1)
+                              if bad_word in password.lower()) * 2), min_password_strength)
 
     return password_strength
 
