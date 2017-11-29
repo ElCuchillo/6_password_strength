@@ -26,12 +26,12 @@ def get_password_strength(password, password_blacklist):
     min_password_strength = 1
 
     date_pattern = r'''(0[1-9] | [12][0-9] | 3[01])   #день 01-31
-                           [- /.]
-                           (0[1-9] | 1[012])          #месяц 01-12
-                           [- /.]
-                           \d{2,4}'''                 # год, 2/4 значный
+                               [- /.]
+                               (0[1-9] | 1[012])          #месяц 01-12
+                               [- /.]
+                               \d{2,4}'''  # год, 2/4 значный
 
-     password_strength = max(((len(password) > medium_length) * 2
+    password_strength = max(((len(password) > medium_length) * 2
                              + (len(password) > good_length) * 4
                              + bool(re.search('[0-9]', password))
                              + bool(re.search('[A-ZА-Я]', password))
@@ -43,7 +43,6 @@ def get_password_strength(password, password_blacklist):
                              - any(bad_word for bad_word in password_blacklist
                                    if bad_word in password.lower()) * 2),
                              min_password_strength)
-
     return password_strength
 
 
